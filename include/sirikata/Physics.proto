@@ -1,0 +1,14 @@
+
+package Sirikata.Physics.Protocol._PBJ_Internal;
+message CollisionBegin {
+	optional fixed64 timestamp = 2 ;
+	repeated double this_position = 3 [packed=true];
+	repeated double other_position = 4 [packed=true];
+	repeated float this_normal = 5 [packed=true];
+	repeated float impulse = 6 [packed=true];
+	optional bytes other_object_reference = 7 ;
+}
+message CollisionEnd {
+	optional fixed64 timestamp = 2 ;
+	optional bytes other_object_reference = 6 ;
+}

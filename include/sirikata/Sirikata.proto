@@ -1,0 +1,169 @@
+
+package Sirikata.Protocol._PBJ_Internal;
+message MessageBody {
+	repeated string message_names = 9;
+	repeated bytes message_arguments = 10;
+}
+message ReadOnlyMessage {
+	optional bytes source_object = 1 ;
+	optional uint32 source_port = 3 ;
+	optional bytes source_space = 1536 ;
+	optional bytes destination_object = 2 ;
+	optional uint32 destination_port = 4 ;
+	optional bytes destination_space = 1537 ;
+	optional int64 id = 7 ;
+	optional int64 reply_id = 8 ;
+	enum ReturnStatus {
+		SUCCESS = 0;
+		NETWORK_FAILURE = 1;
+		TIMEOUT_FAILURE = 3;
+		PROTOCOL_ERROR = 4;
+		PORT_FAILURE = 5;
+	}
+	optional ReturnStatus return_status = 1792 ;
+	repeated string message_names = 9;
+	repeated bytes message_arguments = 10;
+}
+message SpaceServices {
+	optional uint32 rpc_port = 32 ;
+	optional uint32 registration_port = 33 ;
+	optional uint32 loc_port = 34 ;
+	optional uint32 geom_port = 35 ;
+	optional uint32 oseg_port = 36 ;
+	optional uint32 cseg_port = 37 ;
+	optional uint32 router_port = 38 ;
+	optional uint32 persistence_port = 39 ;
+	optional uint32 physics_port = 40 ;
+	optional uint64 pre_connection_buffer = 64 ;
+	optional uint64 max_pre_connection_messages = 65 ;
+}
+message ObjLoc {
+	optional fixed64 timestamp = 2 ;
+	repeated double position = 3 [packed=true];
+	repeated float orientation = 4 [packed=true];
+	repeated float velocity = 5 [packed=true];
+	repeated float rotational_axis = 7 [packed=true];
+	optional float angular_speed = 8 ;
+	enum UpdateFlags {
+		FORCE = 1;
+	}
+	optional uint32 update_flags = 6 ;
+}
+message LocRequest {
+	enum Fields {
+		POSITION = 1;
+		ORIENTATION = 2;
+		VELOCITY = 4;
+		ROTATIONAL_AXIS = 8;
+		ANGULAR_SPEED = 16;
+	}
+	optional uint32 requested_fields = 2 ;
+}
+message NewObj {
+	optional bytes object_uuid_evidence = 2 ;
+	optional ObjLoc requested_object_loc = 3 ;
+	repeated float bounding_sphere = 4 [packed=true];
+}
+message RetObj {
+	optional bytes object_reference = 2 ;
+	optional ObjLoc location = 3 ;
+	repeated float bounding_sphere = 4 [packed=true];
+}
+message DelObj {
+	optional bytes object_reference = 2 ;
+}
+message NewProxQuery {
+	optional uint32 query_id = 2 ;
+	optional bool stateless = 3 ;
+	repeated float relative_center = 4 [packed=true];
+	repeated double absolute_center = 5 [packed=true];
+	optional float max_radius = 6 ;
+	optional float min_solid_angle = 7 ;
+}
+message ProxCall {
+	required uint32 query_id = 2;
+	required bytes proximate_object = 3;
+	enum ProximityEvent {
+		EXITED_PROXIMITY = 0;
+		ENTERED_PROXIMITY = 1;
+		STATELESS_PROXIMITY = 2;
+	}
+	required ProximityEvent proximity_event = 4;
+}
+message DelProxQuery {
+	optional uint32 query_id = 2 ;
+}
+message Vector3fProperty {
+	repeated float value = 10 [packed=true];
+}
+message StringProperty {
+	optional string value = 10 ;
+}
+message StringMapProperty {
+	repeated string keys = 2;
+	repeated string values = 3;
+}
+message PhysicalParameters {
+	enum Mode {
+		NONPHYSICAL = 0;
+		STATIC = 1;
+		DYNAMICBOX = 2;
+		DYNAMICSPHERE = 3;
+		DYNAMICCYLINDER = 4;
+		CHARACTER = 5;
+	}
+	optional Mode mode = 2 ;
+	optional float density = 3 ;
+	optional float friction = 4 ;
+	optional float bounce = 5 ;
+	repeated float hull = 6 [packed=true];
+	optional uint32 collide_msg = 16 ;
+	optional uint32 collide_mask = 17 ;
+	optional float gravity = 18 ;
+}
+message LightInfoProperty {
+	repeated float diffuse_color = 3 [packed=true];
+	repeated float specular_color = 4 [packed=true];
+	optional float power = 5 ;
+	repeated float ambient_color = 6 [packed=true];
+	repeated float shadow_color = 7 [packed=true];
+	optional double light_range = 8 ;
+	optional float constant_falloff = 9 ;
+	optional float linear_falloff = 10 ;
+	optional float quadratic_falloff = 11 ;
+	optional float cone_inner_radians = 12 ;
+	optional float cone_outer_radians = 13 ;
+	optional float cone_falloff = 14 ;
+	enum LightTypes {
+		POINT = 0;
+		SPOTLIGHT = 1;
+		DIRECTIONAL = 2;
+	}
+	optional LightTypes type = 15 ;
+	optional bool casts_shadow = 16 ;
+}
+message ParentProperty {
+	optional bytes value = 10 ;
+}
+message UUIDListProperty {
+	repeated bytes value = 10;
+}
+message ConnectToSpace {
+	optional bytes space_id = 1 ;
+	optional bytes object_uuid_evidence = 2 ;
+	optional ObjLoc requested_object_loc = 3 ;
+	repeated float bounding_sphere = 4 [packed=true];
+}
+message DisconnectFromSpace {
+	optional bytes space_id = 1 ;
+}
+message CreateObject {
+	optional bytes object_uuid = 1 ;
+	repeated ConnectToSpace space_properties = 2;
+	optional string mesh = 3 ;
+	repeated float scale = 4 [packed=true];
+	optional string weburl = 5 ;
+	optional LightInfoProperty light_info = 6 ;
+	optional bool camera = 7 ;
+	optional PhysicalParameters physical = 8 ;
+}

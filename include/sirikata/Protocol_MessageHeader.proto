@@ -1,0 +1,21 @@
+
+package Sirikata.Protocol.Protocol;
+message Header {
+	optional bytes source_object = 1 ;
+	optional uint32 source_port = 3 ;
+	optional bytes source_space = 1536 ;
+	optional bytes destination_object = 2 ;
+	optional uint32 destination_port = 4 ;
+	optional bytes destination_space = 1537 ;
+	optional int64 id = 7 ;
+	optional int64 reply_id = 8 ;
+	enum ReturnStatus {
+		SUCCESS = 0;
+		NETWORK_FAILURE = 1;
+		TIMEOUT_FAILURE = 3;
+		PROTOCOL_ERROR = 4;
+		PORT_FAILURE = 5;
+		UNKNOWN_OBJECT = 6;
+	}
+	optional ReturnStatus return_status = 1792 ;
+}

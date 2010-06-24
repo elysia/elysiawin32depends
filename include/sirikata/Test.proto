@@ -1,0 +1,85 @@
+
+package Sirikata.PB._PBJ_Internal;
+message ExternalMessage {
+message SubMessage {
+	optional bytes subuuid = 1 ;
+	repeated double subvector = 2 [packed=true];
+	optional sfixed64 subduration = 3 ;
+	repeated float subnormal = 4 [packed=true];
+}
+	optional bool is_true = 40 [default=true];
+	repeated float v2f = 2 [packed=true];
+	optional SubMessage sub_mes = 30 ;
+	repeated SubMessage submessers = 31;
+	optional bytes sha = 32 ;
+	repeated bytes shas = 33;
+	repeated float v3f = 4 [packed=true];
+	repeated float v3ff = 5 [packed=true];
+}
+message TestMessage {
+	optional double xxd = 20 [default=10.3];
+	optional float xxf = 21 ;
+	optional uint32 xxu32 = 22 ;
+	optional string xxs = 23 ;
+	optional bytes xxb = 24 ;
+	repeated string xxss = 25;
+	repeated bytes xxbb = 26;
+	repeated float xxff = 27 [packed=true];
+	repeated float xxnn = 29 [packed=true];
+	required float xxfr = 28;
+	repeated float n = 1 [packed=true];
+	repeated float v2f = 2 [packed=true];
+	repeated double v2d = 3 [packed=true];
+	repeated float v3f = 4 [packed=true];
+	repeated double v3d = 5 [packed=true];
+	repeated float v4f = 6 [packed=true];
+	repeated double v4d = 7 [packed=true];
+	repeated float q = 8 [packed=true];
+	optional bytes u = 9 ;
+	optional float a = 10 ;
+	optional fixed64 t = 11 ;
+	optional sfixed64 d = 12 ;
+	enum Flagsf32 {
+		UNIVERSA = 0;
+		WE = 1;
+		IMAGE = 2;
+		LOCA = 3;
+	}
+	optional uint32 f32 = 13 ;
+	enum Flagsf64 {
+		UNIVERSAL = 0;
+		WEB = 1;
+		IMAGES = 2;
+		LOCAL = 3;
+	}
+	enum Enum32 {
+		UNIVERSAL1 = 0;
+		WEB1 = 1;
+		IMAGES1 = 2;
+		LOCAL1 = 3;
+	}
+	optional uint64 f64 = 14 ;
+	repeated float bsf = 15 [packed=true];
+	repeated double bsd = 16 [packed=true];
+	repeated float bbf = 17 [packed=true];
+	repeated double bbd = 18 [packed=true];
+	optional Enum32 e32 = 19 ;
+message SubMessage {
+	optional bytes subuuid = 1 ;
+	repeated double subvector = 2 [packed=true];
+	optional sfixed64 subduration = 3 ;
+	repeated float subnormal = 4 [packed=true];
+}
+	optional SubMessage submes = 30 ;
+	repeated SubMessage submessers = 31;
+	optional bytes sha = 32 ;
+	repeated bytes shas = 33;
+	extensions 100 to 199;
+	optional ExternalMessage extmes = 34 ;
+	repeated ExternalMessage extmessers = 35;
+	required ExternalMessage extmesser = 36;
+}
+extend TestMessage {
+	repeated float extensionbbox = 100 [packed=true];
+	repeated float extensionvector = 101 [packed=true];
+}

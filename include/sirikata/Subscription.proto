@@ -1,0 +1,12 @@
+
+package Sirikata.SubscriptionPBJ.Protocol._PBJ_Internal;
+message Subscribe {
+	optional sint32 broadcast_name = 9 ;
+	optional sfixed64 update_period = 10 ;
+	optional bytes object = 11 ;
+}
+message Broadcast {
+	optional sint32 broadcast_name = 9 ;
+	optional bytes data = 10 ;
+	optional bytes object = 11 ;
+}
