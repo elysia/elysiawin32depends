@@ -96,16 +96,18 @@ public:
     }
 
     BoundingBox& mergeIn(const BoundingBox<real>& other) {
-        mMin = min().min(other.min());
+        Vector3<real> mmin= min().min(other.min());
         Vector3<real> mmax = max().max(other.max());
-        mAcross = Vector3f(mmax - mMin);
+        mMin = mmin;
+        mAcross = Vector3f(mmax - mmin);
         return *this;
     }
 
     BoundingBox& mergeIn(const Vector3<real>& other) {
-        mMin = min().min(other);
+        Vector3<real> mmin=min().min(other);
         Vector3<real> mmax = max().max(other);
-        mAcross = Vector3f(mmax - mMin);
+        mMin=mmin;
+        mAcross = Vector3f(mmax - mmin);
         return *this;
     }
 
@@ -154,6 +156,23 @@ public:
     }
 
 };
+
+template<typename scalar>
+inline std::ostream& operator <<(std::ostream& os, const BoundingBox<scalar> &rhs) {
+  os << '<' << rhs.min() << ',' << rhs.max() << '>';
+  return os;
+}
+
+template<typename scalar>
+inline std::istream& operator >>(std::istream& is, BoundingBox<scalar> &rhs) {
+  // FIXME this should be more robust.  It currently relies on the exact format provided by operator <<
+  char dummy;
+  Vector3<scalar> minval, maxval;
+  is >> dummy >> minval >> dummy >> maxval >> dummy;
+  rhs = BoundingBox<scalar>(minval, maxval);
+  return is;
+}
+
 
 }
 #endif
