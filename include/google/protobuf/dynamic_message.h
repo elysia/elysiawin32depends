@@ -38,6 +38,8 @@
 #ifndef GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
 #define GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
 
+#include <memory>
+
 #include <google/protobuf/message.h>
 #include <google/protobuf/stubs/common.h>
 
@@ -68,13 +70,29 @@ class DescriptorPool;    // descriptor.h
 class LIBPROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
  public:
   // Construct a DynamicMessageFactory that will search for extensions in
-  // the DescriptorPool in which the exendee is defined.
+  // the DescriptorPool in which the extendee is defined.
   DynamicMessageFactory();
 
   // Construct a DynamicMessageFactory that will search for extensions in
   // the given DescriptorPool.
+  //
+  // DEPRECATED:  Use CodedInputStream::SetExtensionRegistry() to tell the
+  //   parser to look for extensions in an alternate pool.  However, note that
+  //   this is almost never what you want to do.  Almost all users should use
+  //   the zero-arg constructor.
   DynamicMessageFactory(const DescriptorPool* pool);
+
   ~DynamicMessageFactory();
+
+  // Call this to tell the DynamicMessageFactory that if it is given a
+  // Descriptor d for which:
+  //   d->file()->pool() == DescriptorPool::generated_pool(),
+  // then it should delegate to MessageFactory::generated_factory() instead
+  // of constructing a dynamic implementation of the message.  In theory there
+  // is no down side to doing this, so it may become the default in the future.
+  void SetDelegateToGeneratedFactory(bool enable) {
+    delegate_to_generated_factory_ = enable;
+  }
 
   // implements MessageFactory ---------------------------------------
 
@@ -86,20 +104,18 @@ class LIBPROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
   // object.  The returned object remains property of the factory and will
   // be destroyed when the factory is destroyed.  Also, any objects created
   // by calling the prototype's New() method share some data with the
-  // prototype, so these must be destoyed before the DynamicMessageFactory
+  // prototype, so these must be destroyed before the DynamicMessageFactory
   // is destroyed.
   //
   // The given descriptor must outlive the returned message, and hence must
   // outlive the DynamicMessageFactory.
   //
-  // Note that while GetPrototype() is idempotent, it is not const.  This
-  // implies that it is not thread-safe to call GetPrototype() on the same
-  // DynamicMessageFactory in two different threads simultaneously.  However,
-  // the returned objects are just as thread-safe as any other Message.
+  // The method is thread-safe.
   const Message* GetPrototype(const Descriptor* type);
 
  private:
   const DescriptorPool* pool_;
+  bool delegate_to_generated_factory_;
 
   // This struct just contains a hash_map.  We can't #include <google/protobuf/stubs/hash.h> from
   // this header due to hacks needed for hash_map portability in the open source
@@ -108,6 +124,20 @@ class LIBPROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
   // headers may only #include other public headers.
   struct PrototypeMap;
   scoped_ptr<PrototypeMap> prototypes_;
+  mutable Mutex prototypes_mutex_;
+
+  friend class DynamicMessage;
+  const Message* GetPrototypeNoLock(const Descriptor* type);
+
+  // Construct default oneof instance for reflection usage if oneof
+  // is defined.
+  static void ConstructDefaultOneofInstance(const Descriptor* type,
+                                            const int offsets[],
+                                            void* default_oneof_instance);
+  // Delete default oneof instance. Called by ~DynamicMessageFactory.
+  static void DeleteDefaultOneofInstance(const Descriptor* type,
+                                         const int offsets[],
+                                         void* default_oneof_instance);
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(DynamicMessageFactory);
 };
@@ -116,4 +146,3 @@ class LIBPROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
 
 }  // namespace google
 #endif  // GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
-

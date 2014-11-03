@@ -41,6 +41,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <google/protobuf/stubs/common.h>
 #include <google/protobuf/descriptor.h>
 
 namespace google {
@@ -95,10 +96,11 @@ class LIBPROTOBUF_EXPORT DescriptorDatabase {
   //
   // This method has a default implementation that always returns
   // false.
-  virtual bool FindAllExtensionNumbers(const string& extendee_type,
-                                       vector<int>* output) {
+  virtual bool FindAllExtensionNumbers(const string& /* extendee_type */,
+                                       vector<int>* /* output */) {
     return false;
   }
+
 
  private:
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(DescriptorDatabase);
@@ -280,6 +282,10 @@ class LIBPROTOBUF_EXPORT EncodedDescriptorDatabase : public DescriptorDatabase {
   // need to keep it around.
   bool AddCopy(const void* encoded_file_descriptor, int size);
 
+  // Like FindFileContainingSymbol but returns only the name of the file.
+  bool FindNameOfFileContainingSymbol(const string& symbol_name,
+                                      string* output);
+
   // implements DescriptorDatabase -----------------------------------
   bool FindFileByName(const string& filename,
                       FileDescriptorProto* output);
@@ -350,6 +356,7 @@ class LIBPROTOBUF_EXPORT MergedDescriptorDatabase : public DescriptorDatabase {
   // of the databases returned true.
   bool FindAllExtensionNumbers(const string& extendee_type,
                                vector<int>* output);
+
 
  private:
   vector<DescriptorDatabase*> sources_;
